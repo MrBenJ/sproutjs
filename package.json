@@ -1,0 +1,9 @@
+{
+  "name": "sproutjs",
+  "version": "0.1.0",
+  "description": "In-Project Code generator",
+  "main": "index.js",
+  "author": "Ben Junya",
+  "license": "MIT",
+  "private": false
+}
