@@ -5,5 +5,17 @@
   "main": "index.js",
   "author": "Ben Junya",
   "license": "MIT",
-  "private": false
+  "private": false,
+  "scripts": {
+    "dev": "node src/cli.js"
+  },
+  "bin": {
+    "sprout": "./src/cli.js"
+  },
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "ejs": "^2.6.1",
+    "inquirer": "^6.0.0",
+    "minimist": "^1.2.0"
+  }
 }
