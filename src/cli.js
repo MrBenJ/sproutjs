@@ -29,7 +29,7 @@ function sproutInit(callback) {
 
 function onCompleteInit(exitStatus) {
   if (exitStatus !== 0) {
-    console.log(chalk.cyan`Sprout failed to initialize`);
+    console.log(chalk.cyan`Exit status ${exitStatus}`);
     return;
   }
 
@@ -42,7 +42,7 @@ function init() {
 
     if (fs.exists(path.resolve(process.cwd(), 'sprout.config.js'))) {
       console.log(chalk.yellow`Sprout is already initialized in the current directory`);
-      return 0;
+      return 1;
     }
     sproutInit(onCompleteInit);
   }

@@ -27,27 +27,28 @@ async function ask() {
 function init() {
   console.log(chalk.cyan`Initializing Sprout...`);
   ask().then( answers => {
-    console.log(answers);
     const {
       projectRootDirectory,
       sproutDirectory
     } = answers;
 
     fs.mkdirSync(path.resolve(projectRootDirectory, sproutDirectory));
-    console.log('Make file?');
+
     ejs.renderFile(
       path.resolve(__dirname, 'sprout.config.ejs'),
       { sproutDirectory: path.resolve(__dirname, sproutDirectory) },
       {},
       ( error, file ) => {
         if (error) { throw error; }
+        console.log(file);
         try {
           fs.writeFileSync(
-            path.resolve(__dirname, 'sprout.config.js'),
+            path.resolve(process.cwd(), 'sprout.config.js'),
             file
           );
+
         } catch(e) {
-          console.log(e);
+
         }
 
       }
