@@ -5,6 +5,7 @@ const chalk = require('chalk');
 const inquirer = require('inquirer');
 const ejs = require('ejs');
 
+const DEFAULT_TEMPLATE_FOLDER_NAME = 'sprout';
 
 async function ask() {
   try {
@@ -13,11 +14,6 @@ async function ask() {
         name: 'projectRootDirectory',
         message: 'Enter the root directory of your project: ',
         default: path.resolve(process.cwd())
-      },
-      {
-        name: 'sproutDirectory',
-        message: 'Template folder name?',
-        default: 'sprout'
       }
     ]);
   } catch(e) {
@@ -32,15 +28,14 @@ function init() {
       sproutDirectory
     } = answers;
 
-    fs.mkdirSync(path.resolve(projectRootDirectory, sproutDirectory));
+    fs.mkdirSync(path.resolve(projectRootDirectory, DEFAULT_TEMPLATE_FOLDER_NAME));
 
     ejs.renderFile(
       path.resolve(__dirname, 'sprout.config.ejs'),
-      { sproutDirectory: path.resolve(__dirname, sproutDirectory) },
+      { sproutDirectory: path.resolve(__dirname, DEFAULT_TEMPLATE_FOLDER_NAME) },
       {},
       ( error, file ) => {
         if (error) { throw error; }
-        console.log(file);
         try {
           fs.writeFileSync(
             path.resolve(process.cwd(), 'sprout.config.js'),
@@ -53,10 +48,7 @@ function init() {
 
       }
     );
-    console.log( 'finish!');
     return 0;
-
-
   });
 
 }
