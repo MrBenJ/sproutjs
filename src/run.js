@@ -50,12 +50,19 @@ async function getTemplateQuestions(template) {
 
   const templateConfig = require(path.resolve(process.cwd(), templateDir, template, 'template.config.js'));
 
-  const { onStart, questions } = templateConfig;
+  const {
+    onStart,
+    questions,
+    onCreate } = templateConfig;
   if (onStart) {
     await onStart();
   }
 
   const variables = await inquirer.prompt(templateConfig.questions);
+
+  if (onCreate) {
+    await onCreate(variables);
+  }
 
   return { template, variables };
 
@@ -68,6 +75,7 @@ async function renderTemplates({template, variables}) {
 }
 
 function init() {
+  console.log(chalk.cyan`Sprout JS `, chalk.white`v0.1.0`);
   console.log(chalk.cyan`Let's generate some code!`);
   getTemplates()
     .then(ask)
