@@ -7,6 +7,11 @@ const fs = require('fs');
 
 const config = require(path.resolve(process.cwd(), './sprout.config.js'));
 
+/**
+ * Gets the list of all the templates
+ *
+ * @return {Promise<Array<{} >>} - Array of template objects
+ */
 async function getTemplates() {
 
   const { templateDir } = config();
@@ -32,6 +37,12 @@ async function getTemplates() {
 
 }
 
+/**
+ * Asks the user which template they would like to generate
+ *
+ * @ param {Array} list - The named list of all the templates to choose from
+ * @return {Promise}
+ */
 async function ask(list) {
   const answers = await inquirer.prompt([
     {
@@ -45,6 +56,12 @@ async function ask(list) {
 
 }
 
+/**
+ * Asks the user template specific questions, then sends it to the renderTemplates() function
+ *
+ * @param  {String} - name of the template to be used
+ * @return {Object} - Users's configuration from questions asked
+ */
 async function getTemplateQuestions(template) {
   const { templateDir } = config();
 
@@ -53,25 +70,31 @@ async function getTemplateQuestions(template) {
   const {
     onStart,
     questions,
-    onCreate } = templateConfig;
+    onCreate,
+    onEnd } = templateConfig;
+
   if (onStart) {
     await onStart();
   }
 
   const variables = await inquirer.prompt(templateConfig.questions);
 
+  return { template, variables, onCreate, onEnd };
+
+}
+
+async function renderTemplates({template, variables, onCreate, onEnd }) {
   if (onCreate) {
     await onCreate(variables);
   }
 
-  return { template, variables };
+  // Render templates here!
 
-}
+  if (onEnd) {
+    await onEnd();
+  }
 
-async function renderTemplates({template, variables}) {
-  // console.log(`I will render ${template} with`);
-  // console.log(variables);
-  return;
+  process.exit(0);
 }
 
 function init() {
