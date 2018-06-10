@@ -12,8 +12,14 @@ async function ask() {
     return await inquirer.prompt([
       {
         name: 'projectRootDirectory',
+        type: 'input',
         message: 'Enter the root directory of your project: ',
         default: path.resolve(process.cwd())
+      },
+      {
+        name: 'createExample',
+        type: 'confirm',
+        message: 'Would you like us to create an example template for you?',
       }
     ]);
   } catch(e) {
@@ -25,14 +31,15 @@ function init() {
   ask().then( answers => {
     const {
       projectRootDirectory,
-      sproutDirectory
+      sproutDirectory = DEFAULT_TEMPLATE_FOLDER_NAME,
+      createExample
     } = answers;
 
-    fs.mkdirSync(path.resolve(projectRootDirectory, DEFAULT_TEMPLATE_FOLDER_NAME));
+    fs.mkdirSync(path.resolve(projectRootDirectory, sproutDirectory));
 
     ejs.renderFile(
       path.resolve(__dirname, 'sprout.config.ejs'),
-      { sproutDirectory: path.resolve(__dirname, DEFAULT_TEMPLATE_FOLDER_NAME) },
+      { sproutDirectory: path.resolve(__dirname, sproutDirectory) },
       {},
       ( error, file ) => {
         if (error) { throw error; }
@@ -48,7 +55,13 @@ function init() {
 
       }
     );
-    return 0;
+
+    if (createExample) {
+      fs.mkdirSync(path.resolve(projectRootDirectory), 'sprout_generated_examples');
+
+    }
+
+    process.exit(0);
   });
 
 }

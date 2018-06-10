@@ -50,6 +50,11 @@ async function getTemplateQuestions(template) {
 
   const templateConfig = require(path.resolve(process.cwd(), templateDir, template, 'template.config.js'));
 
+  const { onStart, questions } = templateConfig;
+  if (onStart) {
+    await onStart();
+  }
+
   const variables = await inquirer.prompt(templateConfig.questions);
 
   return { template, variables };
