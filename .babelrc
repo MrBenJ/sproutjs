@@ -1,0 +1,26 @@
+{
+  "env": {
+    "development": {
+      "plugins": [
+        ["transform-runtime"],
+        ["transform-flow-strip-types"]
+      ]
+    },
+    "test": {
+      "plugins": [
+        ["transform-runtime"],
+        ["transform-flow-strip-types"]
+      ]
+    },
+    "production": {
+      "plugins": [
+        ["transform-runtime"],
+        ["transform-flow-strip-types"]
+      ]
+    }
+  },
+  "presets": [
+    "env",
+    "stage-0"
+  ]
+}

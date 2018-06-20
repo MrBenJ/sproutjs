@@ -1,18 +1,24 @@
 #!/usr/bin/env node
-const chalk = require('chalk');
-const inquirer = require('inquirer');
-const path = require('path');
-const ejs = require('ejs');
-const fs = require('fs');
+// @flow
+import Chalk from 'chalk';
+import Inquirer from 'inquirer';
+import Ejs from 'ejs';
+import path from 'path';
+import fs from 'fs';
 
-const config = require(path.resolve(process.cwd(), './sprout.config.js'));
+/** Sprout Root configuration file */
+type SproutRootConfig = () => {
+  templateDir: string
+};
+
+const config: SproutRootConfig = require(path.resolve(process.cwd(), './sprout.config.js'));
 
 /**
  * Gets the list of all the templates
  *
- * @return {Promise<Array<{} >>} - Array of template objects
+ * @return {Promise<Array<{}>>} - Array of template objects
  */
-async function getTemplates() {
+async function getTemplates(): Promise<any> {
 
   const { templateDir } = config();
 
@@ -25,7 +31,7 @@ async function getTemplates() {
     );
 
     if(!templateConfig) {
-      console.log(chalk.bgRed`[WARNING] - No 'template.config.js' file found in template folder ${template}`);
+      console.log(Chalk.bgRed`[WARNING] - No 'template.config.js' file found in template folder ${template}`);
       return;
     }
     console.log(templateConfig.templateName, template);
@@ -44,7 +50,7 @@ async function getTemplates() {
  * @return {Promise}
  */
 async function ask(list) {
-  const answers = await inquirer.prompt([
+  const answers = await Inquirer.prompt([
     {
       type: 'list',
       name: 'templateChoice',
@@ -62,7 +68,7 @@ async function ask(list) {
  * @param  {String} - name of the template to be used
  * @return {Object} - Users's configuration from questions asked
  */
-async function getTemplateQuestions(template) {
+async function getTemplateQuestions(template: string) {
   const { templateDir } = config();
 
   const templateConfig = require(path.resolve(process.cwd(), templateDir, template, 'template.config.js'));
@@ -77,7 +83,7 @@ async function getTemplateQuestions(template) {
     await onStart();
   }
 
-  const variables = await inquirer.prompt(templateConfig.questions);
+  const variables = await Inquirer.prompt(templateConfig.questions);
 
   return { template, variables, onCreate, onEnd };
 
@@ -98,8 +104,8 @@ async function renderTemplates({template, variables, onCreate, onEnd }) {
 }
 
 function init() {
-  console.log(chalk.cyan`Sprout JS `, chalk.white`v0.1.0`);
-  console.log(chalk.cyan`Let's generate some code!`);
+  console.log(Chalk.cyan`Sprout JS `, Chalk.bold.white`v0.1.0`);
+  console.log(Chalk.cyan`Let's generate some code!`);
   getTemplates()
     .then(ask)
     .then(getTemplateQuestions)
