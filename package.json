@@ -7,7 +7,7 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "build": "babel src --out-dir lib --ignore example",
+    "build": "babel src --out-dir lib --ignore example && cp ./src/sprout.config.ejs ./lib/sprout.config.ejs",
     "dev": "babel-node src/cli.js"
   },
   "bin": {

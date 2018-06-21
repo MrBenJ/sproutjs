@@ -1,15 +1,18 @@
 #!/usr/bin/env node
-const fs = require('fs');
-const path = require('path');
-const chalk = require('chalk');
-const inquirer = require('inquirer');
-const ejs = require('ejs');
+// @flow
+import Chalk from 'chalk';
+import Inquirer from 'inquirer';
+import Ejs from 'ejs';
+import fs from 'fs';
+import path from 'path';
+
+
 
 const DEFAULT_TEMPLATE_FOLDER_NAME = 'sprout';
 
-async function ask() {
+async function ask(): Promise<any> {
   try {
-    return await inquirer.prompt([
+    return await Inquirer.prompt([
       {
         name: 'projectRootDirectory',
         type: 'input',
@@ -27,7 +30,7 @@ async function ask() {
   }
 }
 function init() {
-  console.log(chalk.cyan`Initializing Sprout...`);
+  console.log(Chalk.cyan`Initializing Sprout...`);
   ask().then( answers => {
     const {
       projectRootDirectory,
@@ -37,7 +40,7 @@ function init() {
 
     fs.mkdirSync(path.resolve(projectRootDirectory, sproutDirectory));
 
-    ejs.renderFile(
+    Ejs.renderFile(
       path.resolve(__dirname, 'sprout.config.ejs'),
       { sproutDirectory: path.resolve(__dirname, sproutDirectory) },
       {},
@@ -50,15 +53,14 @@ function init() {
           );
 
         } catch(e) {
-
+          throw e;
         }
 
       }
     );
 
     if (createExample) {
-      fs.mkdirSync(path.resolve(projectRootDirectory), 'sprout_generated_examples');
-
+      fs.mkdirSync(path.resolve(projectRootDirectory, 'sprout_generated_examples'));
     }
 
     process.exit(0);

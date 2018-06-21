@@ -6,10 +6,12 @@ import Ejs from 'ejs';
 import path from 'path';
 import fs from 'fs';
 
-/** Sprout Root configuration file */
-type SproutRootConfig = () => {
+type SproutConfigDescriptor = {
   templateDir: string
 };
+/** Sprout Root configuration file */
+type SproutRootConfig = () => SproutConfigDescriptor;
+
 
 const config: SproutRootConfig = require(path.resolve(process.cwd(), './sprout.config.js'));
 
@@ -25,16 +27,17 @@ async function getTemplates(): Promise<any> {
   const folderPath = path.resolve(process.cwd(), templateDir);
   const templates = fs.readdirSync(folderPath);
 
+  // Gather up all of our templates.
   const templateList = templates.map( template => {
     const templateConfig = require(
       path.resolve(process.cwd(), templateDir, template, 'template.config.js')
     );
 
-    if(!templateConfig) {
+    if (!templateConfig) {
       console.log(Chalk.bgRed`[WARNING] - No 'template.config.js' file found in template folder ${template}`);
       return;
     }
-    console.log(templateConfig.templateName, template);
+    // console.log(templateConfig.templateName, template);
     return { name: templateConfig.templateName, value: template };
 
   });
