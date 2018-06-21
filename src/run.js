@@ -12,6 +12,10 @@ type SproutConfigDescriptor = {
 /** Sprout Root configuration file */
 type SproutRootConfig = () => SproutConfigDescriptor;
 
+type Template = {
+  name: string,
+  value: string
+};
 
 const config: SproutRootConfig = require(path.resolve(process.cwd(), './sprout.config.js'));
 
@@ -20,7 +24,7 @@ const config: SproutRootConfig = require(path.resolve(process.cwd(), './sprout.c
  *
  * @return {Promise<Array<{}>>} - Array of template objects
  */
-async function getTemplates(): Promise<any> {
+async function getTemplates(): Promise<Template[]> {
 
   const { templateDir } = config();
 
@@ -47,7 +51,8 @@ async function getTemplates(): Promise<any> {
 
   });
 
-  return templateList;
+  // Only return truthy values
+  return templateList.filter(Boolean);
 
 }
 
@@ -58,7 +63,7 @@ async function getTemplates(): Promise<any> {
  * @return {Promise}
  */
 async function ask(list) {
-  const answers = await Inquirer.prompt([
+  const { templateChoice } = await Inquirer.prompt([
     {
       type: 'list',
       name: 'templateChoice',
@@ -66,7 +71,7 @@ async function ask(list) {
       choices: list
     }
   ]);
-  return answers.templateChoice;
+  return templateChoice;
 
 }
 

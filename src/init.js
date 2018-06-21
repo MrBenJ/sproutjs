@@ -13,7 +13,7 @@ type SproutInitAnswers = {
   createExample: bool
 };
 
-async function ask(): Promise<any> {
+async function ask(): Promise<Inquirer.prompt> {
   try {
     console.log(Chalk.bold.white`Please make sure you are in the root directory of your project before starting!`);
     return await Inquirer.prompt([
