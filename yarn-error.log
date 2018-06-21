@@ -1,5 +1,5 @@
 Arguments: 
-  /Users/benjunya/.nvm/versions/node/v9.6.1/bin/node /usr/local/Cellar/yarn/1.5.1_1/libexec/bin/yarn.js build
+  /Users/benjunya/.nvm/versions/node/v9.6.1/bin/node /usr/local/Cellar/yarn/1.5.1_1/libexec/bin/yarn.js build --watch
 
 PATH: 
   /Users/benjunya/.rvm/gems/ruby-2.1.9/bin:/Users/benjunya/.rvm/gems/ruby-2.1.9@global/bin:/Users/benjunya/.rvm/rubies/ruby-2.1.9/bin:/Users/benjunya/.yarn/bin:/Users/benjunya/bin:/Users/benjunya/.nvm/versions/node/v9.6.1/bin:/Users/benjunya/.rbenv/shims:/Users/benjunya/.rbenv/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/usr/local/MacGPG2/bin:/Users/benjunya/bin:/Users/benjunya/.rvm/bin
@@ -23,7 +23,7 @@ npm manifest:
     "license": "MIT",
     "private": false,
     "scripts": {
-      "build": "babel src --out-dir lib --ignore example",
+      "build": "babel src --out-dir lib --ignore example && cp ./src/sprout.config.ejs ./lib/sprout.config.ejs",
       "dev": "babel-node src/cli.js"
     },
     "bin": {
@@ -1729,9 +1729,9 @@ Lockfile:
 
 Trace: 
   Error: Command failed.
-  Exit code: 1
+  Exit code: 64
   Command: sh
-  Arguments: -c babel src --out-dir lib --ignore example
+  Arguments: -c babel src --out-dir lib --ignore example && cp ./src/sprout.config.ejs ./lib/sprout.config.ejs --watch
   Directory: /Users/benjunya/dev/sproutjs
   Output:
   

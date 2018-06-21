@@ -28,6 +28,11 @@ async function getTemplates(): Promise<any> {
   const templates = fs.readdirSync(folderPath);
 
   // Gather up all of our templates.
+  if (!templates.length) {
+    console.error(Chalk.bgRed`ERROR:`, Chalk.cyan`No templates found`);
+    console.error(Chalk.bold.white(`Create some template directories in ${templateDir} to get started`));
+    process.exit(0);
+  }
   const templateList = templates.map( template => {
     const templateConfig = require(
       path.resolve(process.cwd(), templateDir, template, 'template.config.js')
