@@ -3,7 +3,8 @@
 import Chalk from 'chalk';
 import Inquirer from 'inquirer';
 import Ejs from 'ejs';
-import fs from 'fs';
+import fs from 'fs'; // @TODO: Refactor to use only fs
+import fse from 'fs-extra';
 import path from 'path';
 
 const DEFAULT_TEMPLATE_FOLDER_NAME = 'sprout';
@@ -40,7 +41,7 @@ function init() {
       sproutDirectory,
       createExample
     } = answers;
-
+    // @TODO: Refactor to use only fs
     fs.mkdirSync(path.resolve(process.cwd(), sproutDirectory));
 
     Ejs.renderFile(
@@ -64,9 +65,20 @@ function init() {
 
     if (createExample) {
       fs.mkdirSync(path.resolve(process.cwd(), 'sprout_generated_examples'));
+      fse.copy(
+        path.resolve(__dirname, 'example'),
+        path.resolve(process.cwd(), `./${sproutDirectory}`, 'ExampleTemplateReact'),
+        err => {
+          if (err) {
+            throw err;
+          }
+        }
+      );
+
+    } else {
+      process.exit(0);
     }
 
-    process.exit(0);
   });
 
 }
