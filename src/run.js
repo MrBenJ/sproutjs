@@ -4,7 +4,8 @@ import Chalk from 'chalk';
 import Inquirer from 'inquirer';
 import Ejs from 'ejs';
 import path from 'path';
-import fs from 'fs';
+import fs from 'fs'; // @TODO: Remove this module and use fse instead
+import fse from 'fs-extra';
 
 type SproutConfigDescriptor = {
   templateDir: string
@@ -46,7 +47,6 @@ async function getTemplates(): Promise<Template[]> {
       console.log(Chalk.bgRed`[WARNING] - No 'template.config.js' file found in template folder ${template}`);
       return;
     }
-    // console.log(templateConfig.templateName, template);
     return { name: templateConfig.templateName, value: template };
 
   });
@@ -85,11 +85,12 @@ async function getTemplateQuestions(template: string) {
   const { templateDir } = config();
 
   const templateConfig = require(path.resolve(process.cwd(), templateDir, template, 'template.config.js'));
-
+  const templateFolderPath = path.resolve(process.cwd(), templateDir, template);
   const {
     onStart,
     questions,
     onCreate,
+    outputDirectory,
     onEnd } = templateConfig;
 
   if (onStart) {
@@ -98,16 +99,43 @@ async function getTemplateQuestions(template: string) {
 
   const variables = await Inquirer.prompt(templateConfig.questions);
 
-  return { template, variables, onCreate, onEnd };
+  return {
+    template,
+    templateFolderPath,
+    variables,
+    outputDirectory,
+    onCreate,
+    onEnd
+  };
 
 }
 
-async function renderTemplates({template, variables, onCreate, onEnd }) {
+async function renderDirectory(outputDirectory, filename, variables) {
+
+}
+
+async function renderTemplates({template, templateFolderPath, outputDirectory, variables, onCreate, onEnd }) {
   if (onCreate) {
     await onCreate(variables);
   }
+  const output = path.resolve(process.cwd(), outputDirectory);
+  const dir = await fse.readdirSync(path.resolve(templateFolderPath));
+  dir.forEach( item => {
+    const EXCLUDED_FILES = ['template.config.js'];
 
-  // Render templates here!
+    if (!EXCLUDED_FILES.includes(item)) {
+      // check if the file is a directory
+      if (fse.stats.isDirectory(item)) {
+        // Enter the directory and recursively build out each file
+        await renderDirectory(outputDirectory, item, variables);
+
+      } else if (fse.stats.isFile(item)) {
+
+      }
+    }
+  });
+
+  // @TODO: START HERE!!
 
   if (onEnd) {
     await onEnd();
