@@ -9,7 +9,7 @@
   "scripts": {
     "build": "babel src --out-dir lib --ignore example",
     "postbuild": "cp ./src/sprout.config.ejs ./lib/sprout.config.ejs && cp -r ./src/example ./lib/example",
-    "dev": "babel-node src/cli.js",
+    "dev": "yarn build --watch",
     "flow": "flow",
     "flow:watch": "flow-watch"
   },
