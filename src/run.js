@@ -107,33 +107,68 @@ async function getTemplateQuestions(template: string) {
     onCreate,
     onEnd
   };
+}
 
+async function renderFile(outputDirectory, filename, variables) {
+  try {
+
+  } catch (error) {
+    throw err;
+  }
 }
 
 async function renderDirectory(outputDirectory, filename, variables) {
+  try {
 
+    console.log('MKDIR', outputDirectory);
+    fs.mkdirSync(path.resolve())
+  } catch (error) {
+
+    throw err;
+  }
 }
 
 async function renderTemplates({template, templateFolderPath, outputDirectory, variables, onCreate, onEnd }) {
-  if (onCreate) {
-    await onCreate(variables);
-  }
-  const output = path.resolve(process.cwd(), outputDirectory);
-  const dir = await fse.readdirSync(path.resolve(templateFolderPath));
-  dir.forEach( item => {
-    const EXCLUDED_FILES = ['template.config.js'];
-
-    if (!EXCLUDED_FILES.includes(item)) {
-      // check if the file is a directory
-      if (fse.stats.isDirectory(item)) {
-        // Enter the directory and recursively build out each file
-        await renderDirectory(outputDirectory, item, variables);
-
-      } else if (fse.stats.isFile(item)) {
-
-      }
+  try {
+    if (onCreate) {
+      await onCreate(variables);
     }
-  });
+
+    const output = path.resolve(process.cwd(), outputDirectory);
+    const dir = await fse.readdirSync(path.resolve(templateFolderPath));
+    dir.forEach( async item => {
+      try {
+        const EXCLUDED_FILES = ['template.config.js'];
+
+        if (!EXCLUDED_FILES.includes(item)) {
+          console.log('Rendering item: ', item);
+          console.log('PATH: ', path.resolve(templateFolderPath, item));
+          const fileStats = fse.statSync(
+            path.resolve(templateFolderPath, item)
+          );
+          // check if the file is a directory
+          if (fileStats.isDirectory()) {
+            const newDir = outputDirectory + '/item';
+            // Enter the directory and recursively build out each file
+            await renderDirectory(newDir, item, variables);
+
+          } else if (fileStats.isFile()) {
+            console.log(item, ' is a File');
+            ejs.renderFile(
+              path.resolve(output, item),
+              variables,
+              {},
+              ( error, file ) => {
+                if (error) { throw error; }
+              }
+            );
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+
+    });
 
   // @TODO: START HERE!!
 
@@ -142,6 +177,11 @@ async function renderTemplates({template, templateFolderPath, outputDirectory, v
   }
 
   process.exit(0);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+
 }
 
 function init() {

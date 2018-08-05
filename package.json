@@ -7,8 +7,8 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "build": "babel src --out-dir lib --ignore example && cp ./src/sprout.config.ejs ./lib/sprout.config.ejs",
-    "postbuild": "cp -r ./src/example ./lib/example",
+    "build": "babel src --out-dir lib --ignore example",
+    "postbuild": "cp ./src/sprout.config.ejs ./lib/sprout.config.ejs && cp -r ./src/example ./lib/example",
     "dev": "babel-node src/cli.js",
     "flow": "flow",
     "flow:watch": "flow-watch"
