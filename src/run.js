@@ -112,6 +112,25 @@ async function getTemplateQuestions(template: string) {
 }
 
 /**
+ * Generates a filename. If filename matches a key in 'variables',
+ * use the key's value instead. Otherwise, use the file's original name
+ * @param  {[type]} filename  [description]
+ * @param  {[type]} variables [description]
+ * @return {[type]}           [description]
+ */
+function generateFilename(filename: string, variables: {}): string {
+  const keys = Object.keys(variables);
+  let generatedFilename = filename.slice(0);
+  keys.forEach( key => {
+    generatedFilename = generatedFilename.replace(new RegExp(key, 'g'), variables[key]);
+  });
+
+  console.log(generatedFilename);
+  return generatedFilename;
+
+}
+
+/**
  * Renders a single file
  * @param  {String} options.templatePath - Absolute path to the EJS Template
  * @param  {String} options.filename     - Absolute path to the file to create
@@ -120,9 +139,11 @@ async function getTemplateQuestions(template: string) {
  */
 async function renderFile({ templatePath, filename , variables }): Promise<void> {
   try {
-    console.log(Chalk.yellow`WRITE: `, filename);
+    const genFilename = generateFilename(filename, variables);
+    console.log(Chalk.yellow`READ: `, templatePath); // This is wrong. Something incorrect is being passed in
+    console.log(Chalk.yellow`WRITE: `, genFilename);
     Ejs.renderFile(templatePath, variables, (error, file) => {
-      fse.writeFileSync(filename, file);
+      fse.writeFileSync(genFilename, file);
     });
   } catch (error) {
     console.error(error);
@@ -146,19 +167,20 @@ async function renderDirectory({ templatePath, directory, variables }): Promise<
     const dir = fse.readdirSync(templatePath);
     dir.forEach( async file => {
       const fileStats = fse.statSync(path.resolve(templatePath, file));
-
+      const filename = generateFilename(file, variables);
       if (fileStats.isDirectory()) {
+
 
         //@TODO: Replace by filename logic here
         await renderDirectory({
           templatePath: path.resolve(templatePath, file),
-          directory: path.resolve(directory, file),
+          directory: path.resolve(directory, filename),
           variables
         });
       } else if (fileStats.isFile()) {
         await renderFile({
           templatePath: path.resolve(templatePath, file),
-          filename: path.resolve(directory, file),
+          filename: path.resolve(directory, filename),
           variables
         })
       }
@@ -181,13 +203,18 @@ async function renderTemplates({template, templateFolderPath, outputDirectory, v
 
     dir.forEach( async file => {
       try {
-        const EXCLUDED_FILES = ['template.config.js'];
+        const EXCLUDED_FILES = ['template.config.js', '.DS_Store'];
 
         if (!EXCLUDED_FILES.includes(file)) {
 
-          // @TODO: If file === variable.someVariablenName --- Make the filename the entered variable name
+          const filename = generateFilename(file, variables);
+          // const keys = Object.keys(variables);
+          // if (keys.includes(file)) {
+          //   file = variables[file];
+          // }
+
           const template = path.resolve(templateFolderPath, file);
-          const outputPath = path.resolve(output, file);
+          const outputPath = path.resolve(output, filename);
 
           console.log(Chalk.yellow`TEMPLATE: `, template);
           console.log(Chalk.yellow`RENDER TO: `, outputPath);

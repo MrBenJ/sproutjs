@@ -67,7 +67,7 @@ function init() {
       fs.mkdirSync(path.resolve(process.cwd(), 'sprout_generated_examples'));
       fse.copy(
         path.resolve(__dirname, 'example'),
-        path.resolve(process.cwd(), `./${sproutDirectory}`, 'ExampleTemplateReact'),
+        path.resolve(process.cwd(), `./${sproutDirectory}`, 'example'),
         err => {
           if (err) {
             throw err;
