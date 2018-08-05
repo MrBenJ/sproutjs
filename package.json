@@ -7,8 +7,10 @@
   "license": "MIT",
   "private": false,
   "scripts": {
+    "prebuild": "yarn clean",
     "build": "babel src --out-dir lib --ignore example",
     "postbuild": "cp ./src/sprout.config.ejs ./lib/sprout.config.ejs && cp -r ./src/example ./lib/example",
+    "clean": "rimraf ./lib",
     "dev": "yarn build --watch",
     "flow": "flow",
     "flow:watch": "flow-watch"
@@ -31,6 +33,7 @@
     "babel-preset-stage-0": "^6.24.1",
     "flow-bin": "^0.74.0",
     "flow-typed": "^2.4.0",
-    "flow-watch": "^1.1.3"
+    "flow-watch": "^1.1.3",
+    "rimraf": "^2.6.2"
   }
 }
