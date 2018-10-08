@@ -1,6 +1,8 @@
 Sprout
 ======
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/MrBenJ/sproutjs.svg)](https://greenkeeper.io/)
+
 [NOTE] This project has not been published yet! It's almost done!
 
 # The in-project code generator
